@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Progress</title>
+  <link rel="stylesheet" href="/static/styles/basic_styles.css" />
+  <link rel="stylesheet" href="/static/styles/progress.css" />
+  <link rel="stylesheet" href="/static/styles/submissions.css" />
+</head>
+<body>
+  <div class="header">
+    <h1>Welcome To Your Progress Page, {{ user.username }}!</h1>
+    <p>[ {{ user.rank }} ]</p>
+    <h2>Here you can track your progress and see how well you are doing!</h2>
+  </div>
+
+  <div class="container">
+    <div class="sub-container">
+      <div class="data-section">
+        <div class="goal-items">
+          <div class="goal-item">
+            <h1>{{ data.calories }}</h1>
+            <h2>Calories</h2>
+          </div>
+          <div class="goal-item">
+            <h1>{{ data.workout }} Hr</h1>
+            <h2>Workout</h2>
+          </div>
+          <div class="goal-item">
+            <h1>{{ data.sleep }} Hr</h1>
+            <h2>Sleep</h2>
+          </div>
+        </div>
+
+        <div class="submission-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Calories</th>
+                <th>Workout (hrs)</th>
+                <th>Sleep (hrs)</th>
+                <th>Weight (kg)</th>
+                <th>Success</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for day in tracked_days %}
+              <tr>
+                <td>{{ day.date }}</td>
+                <td>{{ day.calories }}</td>
+                <td>{{ day.workout }}</td>
+                <td>{{ day.sleep }}</td>
+                <td>{{ day.weight }}</td>
+                <td>{% if day.successful_day %}✅{% else %}❌{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <h2>Actions</h2>
+        <a href="/calculate_data">Calculate New Data</a><br />
+        <a href="/track_day">Track Day</a><br />
+        <a href="/show-submissions">Show All Submissions</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
