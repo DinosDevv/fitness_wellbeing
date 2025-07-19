@@ -1,0 +1,77 @@
+
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+.container form{
+  width: 600px;
+  border: 1px solid white;
+  padding: 20px;
+  margin: 50px;
+} 
+.container form label{
+  width: 100px;
+  text-align: left;
+  flex-shrink: 0;
+  color: #A0A0A0;
+}
+.container form h1{
+  color: #E0E0E0;
+}
+.container form h1{
+  text-align: center;
+  margin-bottom: 30px;
+}
+.container form input[type="number"],
+.container form input[type="text"],
+.container form select{
+  width: 250px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: transparent;
+  border-bottom: white solid 1px;
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+.container form option{
+  background-color: #121212;
+  color: white;
+}
+.container form input:focus,
+.container form select:focus{
+  outline: none;
+  border-bottom-color: #4ADE80;
+}
+.container form input[type="submit"]{
+  width: 100%;
+  padding: 10px;
+  background-color: #4ADE80;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+  color: #F5F5F5;
+}
+.container form input[type="submit"]:hover{
+  background-color: #22C55E;
+}
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+.container form .form-row input,
+.container form .form-row select {
+  flex: 1;
+}
+
