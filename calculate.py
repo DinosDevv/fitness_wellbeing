@@ -22,4 +22,5 @@ def calculate_workout(available_time, activity_level):
   if activity_level in multipliers:
     return round(available_time * multipliers[activity_level], 2)
   else:
+
     raise ValueError("Invalid activity level provided.")

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 1. User auth (Later Maybe)
 2. Calculate User's optimal habits
 -Sleep Time (And hours)
@@ -25,3 +26,24 @@
 4. Buy Premium
 5. Save everything to database instead of json files
 6. Signup/Login and session system
+=======
+1. User auth (Later Maybe)
+2. Calculate User's optimal habits
+-Sleep Time (And hours)
+-Calories
+-Available Time -> Workout Sessions/Week
+-Type of workout based on fitness goals
+3.Weight Tracker
+4.Sleep Tracker
+5.Successful Days Tracker (days where user has hit all goals for the day)
+6.Successful Day Streak Counter
+7.Mental health tracker
+8.Maybe workout tracker (weights/progressive overload)
+
+
+=============== TO-DO ===============
+1. User tags:
+  Rookie
+  Fit
+  Disciplined
+  Monk
