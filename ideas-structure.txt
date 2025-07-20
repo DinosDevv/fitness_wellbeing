@@ -21,9 +21,8 @@
   Monk
 
   (YOU GAIN TAGS/RANKS FOR USING THE APP)
-2. Add Charts
 3. Stats/Analytics
 4. Buy Premium
 5. Save everything to database instead of json files
 6. Signup/Login and session system
-
+7. Add mood tracking to daily tracker

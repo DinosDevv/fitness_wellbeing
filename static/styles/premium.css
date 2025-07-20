@@ -1,0 +1,23 @@
+.container{
+  margin-top: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.package{
+  border: 1px solid white;
+}
+.pv{
+  color: #4ADE80;
+}
+.uf{
+  color: #fcba03;
+}
+.package h1, li, ul, p{
+  margin: 15px;
+}
+.package{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

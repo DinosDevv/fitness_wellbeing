@@ -112,15 +112,15 @@ def progress():
 
   days_to_display = [] #EMPTY LIST
   
-  #'days_to_display' IS THE LIST OF SUBMISSIONS THAT WILL BE DISPLAYED ON THE PROGRESS PAGE, THIS FORBIDDENS THE DISPLAY OF MORE THAN n=5 AMOUNT OF SUBMISSIONS
+  #'days_to_display' IS THE LIST OF SUBMISSIONS THAT WILL BE DISPLAYED ON THE PROGRESS PAGE, THIS FORBIDDENS THE DISPLAY OF MORE THAN n=10 AMOUNT OF SUBMISSIONS
 
-  if(len(tracked_days) <= 5):
+  if(len(tracked_days) <= 10):
     print('Less')
     for i in range(len(tracked_days)):
       i = i+1
       days_to_display.append(tracked_days[-i])
   else:
-    for i in range(5):
+    for i in range(10):
       i = i+1
       days_to_display.append(tracked_days[-i])
     print('More')
