@@ -8,23 +8,6 @@
   color: lightgray;
 }
 
-.container1 button {
-  margin-top: 25px;
-  background-color: #4ADE80;
-  width: 150px;
-  height: 35px;
-  border: none;
-  border-radius: 5px;
-  color: black;
-  transition: 0.3s;
-  font-weight: bold;
-}
-
-.container1 button:hover {
-  background-color: #237541;
-  color: white;
-  cursor: pointer;
-}
 
 /* Features Section */
 .container2 {

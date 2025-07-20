@@ -5,10 +5,26 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  color: white;
 }
 
-body{
-  
+body{ 
   background-color: #121212;
 }
-
+input[type="submit"]:hover, button:hover{
+  background-color: #237541;
+  color: white;
+  cursor: pointer;
+}
+input[type="submit"], button{
+  width: 100%;
+  padding: 10px;
+  background-color: #4ADE80;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+  color: #F5F5F5;
+}

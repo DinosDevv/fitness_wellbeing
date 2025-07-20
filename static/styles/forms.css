@@ -1,4 +1,3 @@
-
 .container{
   display: flex;
   flex-direction: column;
@@ -49,18 +48,6 @@
 .container form select:focus{
   outline: none;
   border-bottom-color: #4ADE80;
-}
-.container form input[type="submit"]{
-  width: 100%;
-  padding: 10px;
-  background-color: #4ADE80;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: 0.3s;
-  color: #F5F5F5;
 }
 .container form input[type="submit"]:hover{
   background-color: #22C55E;

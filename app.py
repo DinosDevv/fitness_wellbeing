@@ -5,16 +5,47 @@ import datetime
 
 app = Flask(__name__)
 
+#HOME PAGE
+
 @app.route('/')
 def index():
   return render_template('home.html')
+
+#CALCULATE DATA FORM
 
 @app.route('/calculate_data')
 def calculate_data():
   return render_template('calculate.html')
 
+#DAILY TRACKER PAGE
+
+@app.route('/track_day')
+def track_day():
+   return render_template('track_day.html') 
+
+#PREMIUM PACKS
+
+@app.route('/premium')
+def premium():
+  return render_template('premium.html')
+
+#SHOW ALL SUBMISSIONS MADE BY THE USER
+
+@app.route('/show-submissions')
+def show_submissions():
+  return render_template('submissions.html', tracked_days=read_json_file('data/tracked_days.json'))
+
+#LOGIN/SIGNUP PAGE
+
+@app.route('/log')
+def log():
+  return render_template('log.html')
+
 @app.route('/calculate', methods=['POST'])
 def calculate():
+
+  #GET THE USER'S DATA FROM THE FORM
+
   age = request.form.get('age', type=int)
   height = request.form.get('height', type=float)
   weight = request.form.get('weight', type=float)
@@ -22,6 +53,8 @@ def calculate():
   activity_level = request.form.get('activity', type=str)
   available_time = request.form.get('available-free-time', type=float)
   sleep_estimation = request.form.get('sleep-estimation', type=float)
+
+  #OVERWRITES THE JSON FILE SO THAT THE USER CAN ONLY HAVE 1 PACK OF DATA
 
   overwrite_json_file('data/user_data.json', {
     'age': age,
@@ -34,14 +67,14 @@ def calculate():
     'rank': 'Rookie'
   })
 
-  return redirect('/dashboard')
+  return redirect('/progress')
 
-@app.route('/track_day')
-def track_day():
-   return render_template('track_day.html') 
 
 @app.route('/track', methods=['POST'])
 def track():
+
+  #GETS DATA PER DAY/SUBMISSION
+
   calories = request.form.get('calories', type=float)
   workout = request.form.get('workout', type=float)
   sleep = request.form.get('sleep', type=float)
@@ -68,22 +101,19 @@ def track():
       sleep <= user_data['sleep'] + 1):
     data['successful_day'] = True
 
-  append_to_json_file('data/tracked_days.json', data)
+  append_to_json_file('data/tracked_days.json', data) #APPENDS DATA TO THE FILE INSTEAD OF OVERWRITING IT WO THAT MULTIPLE SUBMISSIONS CAN BE MADE
 
   return redirect('/progress')
-
-@app.route('/premium')
-def premium():
-  return render_template('premium.html')
 
 @app.route('/progress')
 def progress():
   tracked_days = read_json_file('data/tracked_days.json')
   user_data = read_json_file('data/user_data.json')
 
-  days_to_display = []
-
+  days_to_display = [] #EMPTY LIST
   
+  #'days_to_display' IS THE LIST OF SUBMISSIONS THAT WILL BE DISPLAYED ON THE PROGRESS PAGE, THIS FORBIDDENS THE DISPLAY OF MORE THAN n=5 AMOUNT OF SUBMISSIONS
+
   if(len(tracked_days) <= 5):
     print('Less')
     for i in range(len(tracked_days)):
@@ -102,6 +132,8 @@ def progress():
     if day.get('successful_day', False):
       successful_days += 1
 
+  #DATA FOR STATISTICS
+
   submissions = [day['date'] for day in tracked_days]
   submissions = len(submissions)
   user = {
@@ -111,9 +143,8 @@ def progress():
 
   return render_template('progress.html', tracked_days=days_to_display, successful_days=successful_days, submissions=submissions, data=read_json_file('data/user_data.json'), user=user)
 
-@app.route('/show-submissions')
-def show_submissions():
-  return render_template('submissions.html', tracked_days=read_json_file('data/tracked_days.json'))
+
+#CLEARS ALL SUBMISSIONS FROM THE JSON FILE AND INSTEAD WRITES AN EMPTY '[]' SO THAT MORE SUBMISSIONS CAN BE APPENDED LATER
 
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
@@ -122,5 +153,56 @@ def clear_data():
 
   return redirect('/show-submissions')
 
+#SIGNUP
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+  users = read_json_file('data/users.json')
+  
+  username = request.form.get('username', type=str)
+  password = request.form.get('password', type=str)
+  email = request.form.get('email', type=str)
+
+  user_to_pass = {
+    "username": username,
+    "email": email,
+    "password": password
+  }
+
+  found_match = False
+
+  if len(users) > 0:
+    for user in users:
+      if user['username'] == username or user['email'] == email:
+        found_match = True
+        break
+
+  if found_match:
+    return 'Error'
+  else:
+    append_to_json_file('data/users.json', user_to_pass)
+    return redirect('/progress')
+  
+#LOGIN
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    users = read_json_file('data/users.json')
+
+    username = request.form.get('username', type=str)
+    password = request.form.get('password', type=str)
+
+    for user in users:
+        if user['username'] == username:
+            if user['password'] == password:
+                return 'Logged In!'
+            else:
+                return 'Wrong Password'
+
+    # If no username matched at all
+    return 'Wrong Credentials'
+
+
 if __name__ == '__main__':
+    
     app.run(debug=True)

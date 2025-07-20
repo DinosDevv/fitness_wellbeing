@@ -14,51 +14,35 @@
     <p>[ {{ user.rank }} ]</p>
     <h2>Here you can track your progress and see how well you are doing!</h2>
   </div>
-
   <div class="container">
-    <div class="sub-container">
-      <div class="data-section">
-        <div class="goal-items">
-          <div class="goal-item">
-            <h1>{{ data.calories }}</h1>
-            <h2>Calories</h2>
-          </div>
-          <div class="goal-item">
-            <h1>{{ data.workout }} Hr</h1>
-            <h2>Workout</h2>
-          </div>
-          <div class="goal-item">
-            <h1>{{ data.sleep }} Hr</h1>
-            <h2>Sleep</h2>
-          </div>
-        </div>
-
-        <div class="submission-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Calories</th>
-                <th>Workout (hrs)</th>
-                <th>Sleep (hrs)</th>
-                <th>Weight (kg)</th>
-                <th>Success</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for day in tracked_days %}
-              <tr>
-                <td>{{ day.date }}</td>
-                <td>{{ day.calories }}</td>
-                <td>{{ day.workout }}</td>
-                <td>{{ day.sleep }}</td>
-                <td>{{ day.weight }}</td>
-                <td>{% if day.successful_day %}✅{% else %}❌{% endif %}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+  <div class="sub-container">
+    <!-- Left Column -->
+    <div class="data-section">
+      <div class="submission-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Calories</th>
+              <th>Workout (hrs)</th>
+              <th>Sleep (hrs)</th>
+              <th>Weight (kg)</th>
+              <th>Success</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for day in tracked_days %}
+            <tr>
+              <td>{{ day.date }}</td>
+              <td>{{ day.calories }}</td>
+              <td>{{ day.workout }}</td>
+              <td>{{ day.sleep }}</td>
+              <td>{{ day.weight }}</td>
+              <td>{% if day.successful_day %}✅{% else %}❌{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
 
       <div class="actions-section">
@@ -68,6 +52,57 @@
         <a href="/show-submissions">Show All Submissions</a>
       </div>
     </div>
+
+    <!-- Right Column -->
+    <div class="analytics-section">
+      <div class="goal-items">
+        <div class="goal-item">
+          <h1>{{ data.calories }}</h1>
+          <h2>Calories</h2>
+        </div>
+        <div class="goal-item">
+          <h1>{{ data.workout }} Hr</h1>
+          <h2>Workout</h2>
+        </div>
+        <div class="goal-item">
+          <h1>{{ data.sleep }} Hr</h1>
+          <h2>Sleep</h2>
+        </div>
+      </div>
+
+      <h2>Analytics & Charts</h2>
+      <canvas id="weightChart"></canvas>
+      <canvas id="caloriesChart"></canvas>
+    </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const weightCtx = document.getElementById('weightChart').getContext('2d');
+  const weightChart = new Chart(weightCtx, {
+    type: 'line',
+    data: {
+      labels: {{ tracked_days | map(attribute='date') | list | tojson }},
+      datasets: [{
+        label: 'Weight (kg)',
+        data: {{ tracked_days | map(attribute='weight') | list | tojson }},
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.4
+      }]
+    }
+  });
+
+  const calCtx = document.getElementById('caloriesChart').getContext('2d');
+  const caloriesChart = new Chart(calCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ tracked_days | map(attribute='date') | list | tojson }},
+      datasets: [{
+        label: 'Calories',
+        data: {{ tracked_days | map(attribute='calories') | list | tojson }},
+        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+      }]
+    }
+  });
+</script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 {
-    "age": 49,
-    "height": 165.0,
-    "weight": 50.0,
-    "gender": "female",
-    "calories": 1543.5,
-    "sleep": 7,
-    "workout": 0.2,
+    "age": 18,
+    "height": 180.0,
+    "weight": 68.0,
+    "gender": "male",
+    "calories": 2658.25,
+    "sleep": 8.0,
+    "workout": 3.0,
     "rank": "Rookie"
 }
