@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <link rel="stylesheet" href="static/styles/basic_styles.css">
+  <link rel="stylesheet" href="static/styles/calculate.css"> 
+</head>
+<body>
+
+  <div class="container">
+    <div id="signup-form" class="log-form">
+      <form action="/signup" method="POST">
+        <h1>Sign Up</h1>    
+
+        <div class="form-row">
+          <label for="Username">Username: </label>
+          <input type="text" name="username" id="username" placeholder="Username" required><br>
+        </div>
+
+        <div class="form-row">
+          <label for="Email">Email: </label>
+          <input type="email" name="email" id="email" placeholder="Email" required><br>
+        </div>
+
+        <div class="form-row">
+          <label for="Password">Password: </label>
+          <input type="password" name="password" id="password" placeholder="Password" required><br>
+        </div>
+        
+        <input type="submit" value="Sign Up">
+        <p>Already have an account? <a href="#" onclick="toggle()">Login</a></p> 
+      </form>
+    </div>
+    <div id="login-form" class="log-form">
+      <form action="/login" method="POST">
+        <h1>Log In</h1>    
+
+        <div class="form-row">
+          <label for="Username">Username: </label>
+          <input type="text" name="username" id="username" placeholder="Username" required><br>
+        </div>
+
+
+        <div class="form-row">
+          <label for="Password">Password: </label>
+          <input type="password" name="password" id="password" placeholder="Password" required><br>
+        </div>
+        
+        <input type="submit" value="Log In">
+
+        <p>New here? <a href="#" onclick="toggle()">Sign Up</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="static/scripts/login.js"></script>
+</body>
+</html>

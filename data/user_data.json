@@ -1,0 +1,10 @@
+{
+    "age": 49,
+    "height": 165.0,
+    "weight": 50.0,
+    "gender": "female",
+    "calories": 1543.5,
+    "sleep": 7,
+    "workout": 0.2,
+    "rank": "Rookie"
+}

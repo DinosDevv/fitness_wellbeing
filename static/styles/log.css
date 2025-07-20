@@ -1,0 +1,27 @@
+.container{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+h1, label, p, a{
+  color: white;
+}
+
+.log-form input[type="text"],
+.log-form input[type="password"],
+.log-form input[type="email"]{
+  margin: 15px;
+  width: 200px;
+  height: 35px;
+}
+
+.log-form form{
+  width: 400px;
+  height: 500px;
+  border: 1px solid white;
+}
+
+.log-form input[type="submit"] {
+  height: 35px;
+  width: 100px;
+}

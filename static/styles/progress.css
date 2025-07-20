@@ -1,0 +1,106 @@
+
+body {
+  background-color: #0d0d0d;
+  margin: 0;
+  color: white;
+}
+
+.header {
+  margin: 20px;
+  text-align: center;
+}
+.submission-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  background-color: #1e1e1e;
+  color: white;
+}
+
+th {
+  background-color: #4ADE80;
+  color: black;
+  height: 40px;
+  text-align: center;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 10px;
+  text-align: center;
+}
+
+.header p {
+  color: #4ADE80;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sub-container {
+  border: 1px solid white;
+  width: 80%;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.data-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.goal-items {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 20px 0;
+  padding: 20px;
+  width: 100%;
+  border: 1px solid lightgray;
+  border-radius: 15px;
+  background-color: #1a1a1a;
+}
+
+.goal-item {
+  width: 200px;
+  height: 100px;
+  background-color: #121212;
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 15px;
+  color: lightgray;
+  padding: 10px;
+}
+
+.goal-item h1 {
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.goal-item h2 {
+  font-size: 20px;
+  color: #A0A0A0;
+}
+
+.actions-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.actions-section a {
+  color: #4ADE80;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin: 5px 0;
+}

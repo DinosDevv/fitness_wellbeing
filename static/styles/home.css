@@ -1,0 +1,84 @@
+/* Hero Section */
+.container1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: lightgray;
+}
+
+.container1 button {
+  margin-top: 25px;
+  background-color: #4ADE80;
+  width: 150px;
+  height: 35px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.container1 button:hover {
+  background-color: #237541;
+  color: white;
+  cursor: pointer;
+}
+
+/* Features Section */
+.container2 {
+  background-color: #080808;
+  color: lightgray;
+  padding: 40px 20px;
+}
+
+.core_features {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.feature-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.feature-container img {
+  width: 75px;
+  height: 75px;
+}
+
+/* Why Choose Us */
+.container3 {
+  padding: 50px 20px;
+  background-color: #101010;
+  color: lightgray;
+  text-align: center;
+}
+
+.container3 h1 {
+  margin-bottom: 20px;
+}
+
+/* Navigation Links */
+.navigation {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: #1a1a1a;
+}
+
+.navigation a {
+  color: #4ADE80;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.navigation a:hover {
+  color: white;
+}
