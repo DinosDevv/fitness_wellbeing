@@ -2,8 +2,25 @@ from flask import Flask, request, render_template, redirect, jsonify
 from calculate import calculate_calories, calculate_sleep, calculate_workout
 from file_handler import overwrite_json_file, read_json_file, append_to_json_file
 import datetime
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tracked_days.db'
+db = SQLAlchemy(app)
+
+class submission_entry(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  date = db.Column(db.String(20), default=lambda: datetime.datetime.now().strftime('%Y-%m-%d'))
+  calories = db.Column(db.Float)
+  workout = db.Column(db.Float)
+  sleep = db.Column(db.Float)
+  weight = db.Column(db.Float)
+  mood = db.Column(db.String(50))
+  successful_day = db.Column(db.Boolean, default=False)
+
+with app.app_context():
+  db.create_all()
+
 
 #HOME PAGE
 
@@ -33,7 +50,8 @@ def premium():
 
 @app.route('/show-submissions')
 def show_submissions():
-  return render_template('submissions.html', tracked_days=read_json_file('data/tracked_days.json'))
+  entries = submission_entry.query.order_by(submission_entry.date.desc()).all()
+  return render_template('submissions.html', tracked_days=entries)
 
 #LOGIN/SIGNUP PAGE
 
@@ -94,66 +112,68 @@ def track():
 
   # SEE IF USER HIT ALL GOALS -> SUCCESSFUL DAY
 
+  entry = submission_entry(
+    date=datetime.datetime.now().strftime('%Y-%m-%d'),
+    calories=calories,
+    workout=workout,
+    sleep=sleep,
+    weight=weight,
+    mood=mood,
+    successful_day=False  # αυτό θα το ενημερώσουμε αμέσως μετά
+  )
+
+  # Υπολογισμός αν είναι successful day
   user_data = read_json_file('data/user_data.json')
-  if (calories >= user_data['calories'] -150 and 
-      calories <= user_data['calories'] + 200 and
-
+  if (
+      calories >= user_data['calories'] - 150 and calories <= user_data['calories'] + 200 and
       workout >= user_data['workout'] and
-      
-      sleep >= user_data['sleep'] and 
-      sleep <= user_data['sleep'] + 1):
-    data['successful_day'] = True
+      sleep >= user_data['sleep'] and sleep <= user_data['sleep'] + 1
+  ):
+      entry.successful_day = True
 
-  append_to_json_file('data/tracked_days.json', data) #APPENDS DATA TO THE FILE INSTEAD OF OVERWRITING IT WO THAT MULTIPLE SUBMISSIONS CAN BE MADE
+  db.session.add(entry)
+  db.session.commit()
+
+  #APPENDS DATA TO THE FILE INSTEAD OF OVERWRITING IT WO THAT MULTIPLE SUBMISSIONS CAN BE MADE
 
   return redirect('/progress')
 
 @app.route('/progress')
 def progress():
-  tracked_days = read_json_file('data/tracked_days.json')
-  user_data = read_json_file('data/user_data.json')
+  # Δε χρειαζόμαστε πλέον tracked_days = read_json_file()
+  all_entries = submission_entry.query.order_by(submission_entry.id.desc()).all()
 
-  days_to_display = [] #EMPTY LIST
-  
-  #'days_to_display' IS THE LIST OF SUBMISSIONS THAT WILL BE DISPLAYED ON THE PROGRESS PAGE, THIS FORBIDDENS THE DISPLAY OF MORE THAN n=10 AMOUNT OF SUBMISSIONS
+  # Εμφάνιση των 10 τελευταίων (ή λιγότερων)
+  days_to_display = all_entries[:10]
 
-  if(len(tracked_days) <= 10):
-    print('Less')
-    for i in range(len(tracked_days)):
-      i = i+1
-      days_to_display.append(tracked_days[-i])
-  else:
-    for i in range(10):
-      i = i+1
-      days_to_display.append(tracked_days[-i])
-    print('More')
+  # Πόσες επιτυχίες
+  successful_days = sum(1 for day in all_entries if day.successful_day)
 
-  print(days_to_display)
+  submissions = len(all_entries)
 
-  successful_days = 0
-  for day in tracked_days:
-    if day.get('successful_day', False):
-      successful_days += 1
+  user_data = read_json_file('data/user_data.json')  # προς το παρόν κρατάμε αυτό
 
-  #DATA FOR STATISTICS
-
-  submissions = [day['date'] for day in tracked_days]
-  submissions = len(submissions)
   user = {
-    "username": "Konstantinos", 
-    "rank": user_data['rank']
+      "username": "Konstantinos",
+      "rank": user_data['rank']
   }
 
-  return render_template('progress.html', tracked_days=days_to_display, successful_days=successful_days, submissions=submissions, data=read_json_file('data/user_data.json'), user=user)
+  return render_template(
+      'progress.html',
+      tracked_days=days_to_display,
+      successful_days=successful_days,
+      submissions=submissions,
+      data=user_data,
+      user=user
+  )
 
 
 #CLEARS ALL SUBMISSIONS FROM THE JSON FILE AND INSTEAD WRITES AN EMPTY '[]' SO THAT MORE SUBMISSIONS CAN BE APPENDED LATER
 
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
-  clear = []
-  overwrite_json_file('data/tracked_days.json', clear)
-
+  db.session.query(submission_entry).delete()
+  db.session.commit()
   return redirect('/show-submissions')
 
 #SIGNUP
