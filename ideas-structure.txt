@@ -1,28 +1,45 @@
-<<<<<<< HEAD
-1. User auth (Later Maybe)
-2. Calculate User's optimal habits
--Sleep Time (And hours)
--Calories
--Available Time -> Workout Sessions/Week
--Type of workout based on fitness goals
-3.Weight Tracker
-4.Sleep Tracker
-5.Successful Days Tracker (days where user has hit all goals for the day)
-6.Successful Day Streak Counter
-7.Mental health tracker
-8.Maybe workout tracker (weights/progressive overload)
-
-
 =============== TO-DO ===============
+0. Type of workout based on fitness goals
+  NOTES:
+    Add Fitness Goals Page on calculate data page generate workout style (should impact workout hour goal)
+
 1. User tags:
   Rookie
   Fit
   Disciplined
   Monk
 
-  (YOU GAIN TAGS/RANKS FOR USING THE APP)
+  NOTES:
+    0 Submissions -> Rookie
+    50 Submissions -> Fit
+    100 Submissions -> Disciplined
+    200 Submissions -> Monk
+
+2. Add sort by to '/progress'
+  SORT BY:
+    Date
+    Successful days
+    Happy Days
 3. Stats/Analytics
+  ADDED:
+    Total submissions
+  TO BE ADDED:
+    Successful amount
+    Successful Streak
+    Positive mood pie (How many days user was happy/enthusiastic/very happy vs how many he was bored/angry/sad)  
 4. Buy Premium
 5. Save everything to database instead of json files
 6. Signup/Login and session system
-7. Add mood tracking to daily tracker
+  NOTES:
+    Signup/Login does work, it saves users to json file instead of .db file
+
+7. Pair Users to User data and store in .db
+
+8.Maybe workout tracker (weights/progressive overload) 
+  ???
+
+=============== DONE ===============
+
+Add mood tracking to daily tracker 
+
+
