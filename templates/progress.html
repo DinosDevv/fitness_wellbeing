@@ -29,6 +29,7 @@
               <th>Workout (hrs)</th>
               <th>Sleep (hrs)</th>
               <th>Weight (kg)</th>
+              <th>Mood</th>
               <th>Success</th>
             </tr>
           </thead>
@@ -40,6 +41,7 @@
               <td>{{ day.workout }}</td>
               <td>{{ day.sleep }}</td>
               <td>{{ day.weight }}</td>
+              <td>{{ day.mood }}</td>
               <td>{% if day.successful_day %}✅{% else %}❌{% endif %}</td>
             </tr>
             {% endfor %}

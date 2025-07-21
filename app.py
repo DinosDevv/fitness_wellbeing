@@ -79,6 +79,7 @@ def track():
   workout = request.form.get('workout', type=float)
   sleep = request.form.get('sleep', type=float)
   weight = request.form.get('weight', type=float)
+  mood = request.form.get('mood')
 
   data = {
     'date': datetime.datetime.now().strftime('%Y-%m-%d'),
@@ -86,13 +87,15 @@ def track():
     'workout': workout,
     'sleep': sleep,
     'weight': weight,
+    'mood': mood,
     'successful_day': False
   }
+  print(request.form)
 
   # SEE IF USER HIT ALL GOALS -> SUCCESSFUL DAY
 
   user_data = read_json_file('data/user_data.json')
-  if (calories >= user_data['calories'] and 
+  if (calories >= user_data['calories'] -150 and 
       calories <= user_data['calories'] + 200 and
 
       workout >= user_data['workout'] and

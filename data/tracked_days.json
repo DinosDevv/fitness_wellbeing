@@ -1,106 +1,47 @@
 [
     {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
+        "date": "2025-07-21",
+        "calories": 2600.0,
+        "workout": 3.0,
+        "sleep": 8.0,
+        "weight": 68.0,
+        "mood": "Very Happy",
         "successful_day": false
     },
     {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
+        "date": "2025-07-21",
+        "calories": 2700.0,
+        "workout": 2.0,
+        "sleep": 9.0,
+        "weight": 69.0,
+        "mood": "Very Happy",
         "successful_day": false
     },
     {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
+        "date": "2025-07-21",
+        "calories": 2500.0,
+        "workout": 3.0,
+        "sleep": 10.0,
+        "weight": 67.0,
+        "mood": "Very Happy",
         "successful_day": false
     },
     {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
+        "date": "2025-07-21",
+        "calories": 2658.25,
+        "workout": 3.0,
+        "sleep": 8.0,
+        "weight": 60.0,
+        "mood": "Very Happy",
+        "successful_day": true
     },
     {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
-    },
-    {
-        "date": "2025-07-20",
-        "calories": 12.0,
-        "workout": 12.0,
-        "sleep": 12.0,
-        "weight": 24.0,
-        "successful_day": false
+        "date": "2025-07-21",
+        "calories": 2658.25,
+        "workout": 3.0,
+        "sleep": 8.0,
+        "weight": 60.0,
+        "mood": "Bored",
+        "successful_day": true
     }
 ]

@@ -6,9 +6,9 @@
   <title>Track Day</title>
   <link rel="stylesheet" href="/static/styles/basic_styles.css">
   <link rel="stylesheet" href="/static/styles/forms.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 
 </head>
 <body>
@@ -36,6 +36,19 @@
         <input type="number" id="weight" name="weight" min=20 max=400 placeholder="Enter weight in kg" step="0.01"><br>
       </div>
       
+      <div class="form-row">
+        <label for="mood">Today's Mood: </label>
+        <select id="mood" name="mood">
+          <option value="Very Happy">Very Happy</option>
+          <option value="Happy">Happy</option>
+          <option value="Enthusiastic">Enthusiastic</option>
+          <option value="Bored">Bored</option>
+          <option value="Angry">Angry</option>
+          <option value="Sad">Sad</option>
+        </select><br>
+      </div>
+
+
       <input type="submit" value="Track Day"><br>
 
     </form>
