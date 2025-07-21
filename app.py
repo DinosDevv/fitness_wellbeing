@@ -5,8 +5,10 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tracked_days.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tracked_days.db' #CONFIGURES THE SUBMISSION DATABASE
 db = SQLAlchemy(app)
+
+#CREATES THE SUBMISSION DATABASE CLASS
 
 class submission_entry(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +61,8 @@ def show_submissions():
 def log():
   return render_template('log.html')
 
+#CALCULATES AND SAVES PERSONAL GOALS/DATA FOR USER INTO JSON FILE (-> SOON TO CHANGE TO .db FILE)
+
 @app.route('/calculate', methods=['POST'])
 def calculate():
 
@@ -87,6 +91,7 @@ def calculate():
 
   return redirect('/progress')
 
+#TRACKS DAILY SUBMISSION
 
 @app.route('/track', methods=['POST'])
 def track():
@@ -110,7 +115,7 @@ def track():
   }
   print(request.form)
 
-  # SEE IF USER HIT ALL GOALS -> SUCCESSFUL DAY
+  #CREATES THE DATABASE ENTRY 
 
   entry = submission_entry(
     date=datetime.datetime.now().strftime('%Y-%m-%d'),
@@ -119,10 +124,10 @@ def track():
     sleep=sleep,
     weight=weight,
     mood=mood,
-    successful_day=False  # αυτό θα το ενημερώσουμε αμέσως μετά
+    successful_day=False  #TO BE UPDATED!!
   )
 
-  # Υπολογισμός αν είναι successful day
+  # SEE IF USER HIT ALL GOALS -> SUCCESSFUL DAY
   user_data = read_json_file('data/user_data.json')
   if (
       calories >= user_data['calories'] - 150 and calories <= user_data['calories'] + 200 and
@@ -131,30 +136,31 @@ def track():
   ):
       entry.successful_day = True
 
-  db.session.add(entry)
+  db.session.add(entry) #SAVES SUBMISSION TO instance/tracked_days.db
   db.session.commit()
-
-  #APPENDS DATA TO THE FILE INSTEAD OF OVERWRITING IT WO THAT MULTIPLE SUBMISSIONS CAN BE MADE
 
   return redirect('/progress')
 
 @app.route('/progress')
 def progress():
-  # Δε χρειαζόμαστε πλέον tracked_days = read_json_file()
+  
+  #FETCHES ALL ENTRIES FROM DATABASE 
   all_entries = submission_entry.query.order_by(submission_entry.id.desc()).all()
 
-  # Εμφάνιση των 10 τελευταίων (ή λιγότερων)
+  #CREATES A LIST THAT DISPLAYS ONLY (n) NUMBER OF SUBMISSIONS
   days_to_display = all_entries[:10]
 
-  # Πόσες επιτυχίες
+  #CALCULATES THE NUMBER OF SUCCESFULL ENTRIES
   successful_days = sum(1 for day in all_entries if day.successful_day)
 
   submissions = len(all_entries)
 
-  user_data = read_json_file('data/user_data.json')  # προς το παρόν κρατάμε αυτό
+  user_data = read_json_file('data/user_data.json')  #FOR NOW READS FROM JSON (-> SOON WILL BE PAIRED TO USER IN .db)
+
+  #DEMO USERNAME/RANK
 
   user = {
-      "username": "Konstantinos",
+      "username": "Konstantinos", #DISPLAYED IN THE PROGRESS PAGE ON TOP
       "rank": user_data['rank']
   }
 
@@ -167,8 +173,7 @@ def progress():
       user=user
   )
 
-
-#CLEARS ALL SUBMISSIONS FROM THE JSON FILE AND INSTEAD WRITES AN EMPTY '[]' SO THAT MORE SUBMISSIONS CAN BE APPENDED LATER
+#CLEARS ALL SUBMISSIONS FROM THE .db FILE
 
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
@@ -180,7 +185,7 @@ def clear_data():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-  users = read_json_file('data/users.json')
+  users = read_json_file('data/users.json') #READS ALL USERS FROM JSON FILE (-> SOON TO BE CHANGED)
   
   username = request.form.get('username', type=str)
   password = request.form.get('password', type=str)
@@ -192,7 +197,7 @@ def signup():
     "password": password
   }
 
-  found_match = False
+  found_match = False #BOOL VARIABLE TO CHECK IF USER ALREADY EXISTS
 
   if len(users) > 0:
     for user in users:
@@ -201,16 +206,18 @@ def signup():
         break
 
   if found_match:
-    return 'Error'
+    return 'User exists!' #RETURN ERROR IF USER EXISTS
   else:
-    append_to_json_file('data/users.json', user_to_pass)
+    append_to_json_file('data/users.json', user_to_pass) #IF USER DOESNT ALREADY EXIST, SAVE USER TO JSON FILE (-> SOON TO BE CHANGED)
     return redirect('/progress')
   
 #LOGIN
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    users = read_json_file('data/users.json')
+    users = read_json_file('data/users.json') #READ ALL USERS FROM JSON FILE (-> SOON TO BE CHANGED)
+
+    #GET DATA FROM FORM
 
     username = request.form.get('username', type=str)
     password = request.form.get('password', type=str)
@@ -225,6 +232,7 @@ def login():
     # If no username matched at all
     return 'Wrong Credentials'
 
+#APP RUNS WITH 'py app.py'
 
 if __name__ == '__main__':
     
