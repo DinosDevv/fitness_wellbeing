@@ -23,10 +23,10 @@
 3. Stats/Analytics
   ADDED:
     Total submissions
+    Positive mood pie (How many days user was happy/enthusiastic/very happy vs how many he was bored/angry/sad)  
   TO BE ADDED:
     Successful amount
     Successful Streak
-    Positive mood pie (How many days user was happy/enthusiastic/very happy vs how many he was bored/angry/sad)  
 4. Buy Premium
 
 8. Maybe workout tracker (weights/progressive overload) 
@@ -34,7 +34,8 @@
 
 9. Add Starting Rank when someone signs up
 10. Add Nav Bar
-
+11. ADD BETTER COMMENTS TO 'app.py'
+12. REMOVE 'data' FOLDER
 
 =============== DONE ===============
 

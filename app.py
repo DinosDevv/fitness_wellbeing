@@ -6,16 +6,18 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) #SESSION ENCRYPTION
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' #CONFIGURES THE SUBMISSION DATABASE
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' #CONFIGURES THE USER DATABASE
 db = SQLAlchemy(app)
 
-#CREATES THE SUBMISSION DATABASE CLASS
+#CREATES THE USER DATABASE CLASS
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True)
   email = db.Column(db.String(120), unique=True)
   password = db.Column(db.String(200), nullable=False)
+
+  #RELATES SUBMISSIONS/USERDATA TO MAIN USER .db
 
   user_data = db.relationship('UserData', backref='user', uselist=False)
   submissions = db.relationship('Submissions', backref='user', lazy=True)
@@ -82,7 +84,10 @@ def premium():
 
 @app.route('/show-submissions')
 def show_submissions():
-  entries = Submissions.query.order_by(Submissions.date.desc()).all()
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
+
+  entries = User.query.get(session['user_id']).submissions
   return render_template('submissions.html', tracked_days=entries)
 
 #LOGIN/SIGNUP PAGE
@@ -95,7 +100,7 @@ def login_page():
 def signup_page():
   return render_template('signup.html')
 
-#CALCULATES AND SAVES PERSONAL GOALS/DATA FOR USER INTO JSON FILE (-> SOON TO CHANGE TO .db FILE)
+#CALCULATES AND SAVES PERSONAL GOALS/DATA FOR USER INTO .db
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
@@ -155,7 +160,7 @@ def track():
     sleep=sleep,
     weight=weight,
     mood=mood,
-    successful_day=False,  #TO BE UPDATED!!
+    successful_day=False,  #TO BE UPDATED
     user_id = session['user_id']
   )
 
@@ -171,7 +176,7 @@ def track():
       entry.successful_day = True
 
 
-  db.session.add(entry) #SAVES SUBMISSION TO instance/tracked_days.db
+  db.session.add(entry) #SAVES SUBMISSION TO .db
   db.session.commit()
 
   return redirect('/progress')
@@ -196,13 +201,32 @@ def progress():
 
   amount_of_submissions = len(all_entries)
 
+  #CALCULATE MOODS
+
+  good = 0
+  bad = 0
+
+  for submission in all_entries:
+    if submission.mood == 'Very Happy' or submission.mood == 'Happy' or submission.mood == 'Enthusiastic':
+      good += 1
+    else:
+      bad += 1
+
+  moods = {"good": good, "bad": bad, "message": ""} 
+
+  if (good / (good+bad)) > 0.5:
+    moods['message'] = 'Keep being happy!'
+  else:
+    moods['message'] = 'Do activities that make you feel better!'
+
   return render_template(
       'progress.html',
       tracked_days=days_to_display,
       successful_days=successful_days,
       submissions=amount_of_submissions,
       data=user_data,
-      logged_user = user
+      logged_user = user,
+      moods=moods
   )
 
 #CLEARS ALL SUBMISSIONS FROM THE .db FILE

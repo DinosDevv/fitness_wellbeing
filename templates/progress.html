@@ -78,6 +78,7 @@
       <h2>Analytics & Charts</h2>
       <canvas id="weightChart"></canvas>
       <canvas id="caloriesChart"></canvas>
+      <canvas id="moodPie"></canvas>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -107,6 +108,36 @@
         backgroundColor: 'rgba(255, 99, 132, 0.5)'
       }]
     }
+  });
+  const moodCtx = document.getElementById('moodPie').getContext('2d')
+  const data = {
+    labels: ['Bad Mood', 'Good Mood'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [{{ moods.bad }}, {{ moods.good }}], // Βάλε εσύ νούμερα
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(75, 192, 192, 1)',
+        ],
+      }
+    ]
+  }
+  const moodPie = new Chart(moodCtx, {
+    type: 'pie',
+    data,  // ✅ ή data: data
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: '{{ moods.message }}'
+        }
+      }
+    },
   });
 </script>
 </body>
