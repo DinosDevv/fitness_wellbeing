@@ -3,3 +3,27 @@
 __pycache__/
 instance/
 .env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.Lib/
+Scripts/
+Lib/
+Include/
+bin/
+share/
+
+# VSCode or other IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
