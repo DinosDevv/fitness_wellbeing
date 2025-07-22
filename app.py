@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, redirect, session, url_for, flash
-from calculate import calculate_calories, calculate_sleep, calculate_workout
+from calculate import calculate_calories, calculate_sleep
 import datetime
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -72,7 +72,10 @@ def track_day():
   if 'user_id' not in session:
     return redirect(url_for('login_page'))
 
-  return render_template('track_day.html') 
+  if User.query.get(session['user_id']).user_data == None:
+    return redirect(url_for('calculate_data'))
+
+  return render_template('track_day.html')
 
 #PREMIUM PACKS
 
@@ -100,6 +103,12 @@ def login_page():
 def signup_page():
   return render_template('signup.html')
 
+#WORKOUT PAGE
+
+@app.route('/workouts')
+def workouts():
+  return render_template('workouts.html')
+
 #CALCULATES AND SAVES PERSONAL GOALS/DATA FOR USER INTO .db
 
 @app.route('/calculate', methods=['POST'])
@@ -110,6 +119,9 @@ def calculate():
 
   #GET THE USER'S DATA FROM THE FORM
 
+  user_id = session['user_id']
+  user = User.query.get(user_id)
+
   age = request.form.get('age', type=int)
   height = request.form.get('height', type=float)
   weight = request.form.get('weight', type=float)
@@ -118,19 +130,28 @@ def calculate():
   available_time = request.form.get('available-free-time', type=float)
   sleep_estimation = request.form.get('sleep-estimation', type=float)
 
-  data_calculation = UserData(
-    age = age,
-    height = height,
-    weight = weight,
-    gender = gender,
-    calories = calculate_calories(age, height, weight, activity_level),
-    sleep = calculate_sleep(sleep_estimation, age),
-    workout = calculate_workout(available_time, activity_level),
-    rank = 'Rookie',
-    user_id = session['user_id']
-  )
-
-  db.session.add(data_calculation)
+  if user.user_data:
+    user.user_data.age = age
+    user.user_data.height = height
+    user.user_data.weight = weight
+    user.user_data.gender = gender
+    user.user_data.calories = calculate_calories(age, height, weight, activity_level)
+    user.user_data.sleep = calculate_sleep(sleep_estimation, age)
+    user.user_data.workout = available_time
+    user.user_data.rank = 'Rookie'
+  else:
+    data_calculation = UserData(
+      age = age,
+      height = height,
+      weight = weight,
+      gender = gender,
+      calories = calculate_calories(age, height, weight, activity_level),
+      sleep = calculate_sleep(sleep_estimation, age),
+      workout = available_time,
+      rank = 'Rookie',
+      user_id = session['user_id']
+    )
+    db.session.add(data_calculation)
   db.session.commit()
 
   return redirect(url_for('progress'))
@@ -201,23 +222,27 @@ def progress():
 
   amount_of_submissions = len(all_entries)
 
-  #CALCULATE MOODS
+  '''
+  GOOD MOODS ARE HAPPY, VERY HAPPY, ENTHUSIASTIC
+  BAD MOODS ARE BORED, ANGRY, SAD
+  '''
 
-  good = 0
-  bad = 0
+  good_moods = 0
+  bad_moods = 0
 
   for submission in all_entries:
     if submission.mood == 'Very Happy' or submission.mood == 'Happy' or submission.mood == 'Enthusiastic':
-      good += 1
+      good_moods += 1
     else:
-      bad += 1
+      bad_moods += 1
 
-  moods = {"good": good, "bad": bad, "message": ""} 
+  moods = {"good": good_moods, "bad": bad_moods, "message": ""} 
 
-  if (good / (good+bad)) > 0.5:
-    moods['message'] = 'Keep being happy!'
-  else:
-    moods['message'] = 'Do activities that make you feel better!'
+  if (good_moods+bad_moods) != 0:
+    if (good_moods / (good_moods+bad_moods)) > 0.5:
+      moods['message'] = 'Keep being happy!'
+    else:
+      moods['message'] = 'Do activities that make you feel better!'
 
   return render_template(
       'progress.html',

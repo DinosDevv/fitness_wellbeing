@@ -36,9 +36,12 @@
 10. Add Nav Bar
 11. ADD BETTER COMMENTS TO 'app.py'
 12. REMOVE 'data' FOLDER
+15. Polish Sleep hour calculations
 
 =============== DONE ===============
 
+Round Calories after calculation
+Fix algorithm for daily/weekly workout hours
 Add mood tracking to daily tracker 
 Save everything to database instead of json files
 Signup/Login and session system

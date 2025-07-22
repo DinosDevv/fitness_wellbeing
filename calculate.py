@@ -7,7 +7,7 @@ def calculate_calories(age, height, weight, activity_level):
   #MULTIPLIES BMR WITH THE ACTIVITY LEVEL TO CALCULATE CALORIES TO BE CONSUMED /day
 
   if activity_level in multipliers:
-    return bmr * multipliers[activity_level]
+    return round(bmr * multipliers[activity_level], 2)
   else:
     raise ValueError("Invalid activity level provided.")
 
@@ -21,14 +21,4 @@ def calculate_sleep(sleep_estimation, age):
   elif age < 65:
     return max(7, sleep_estimation)
   else:
-    return max(6, sleep_estimation)
-  
-def calculate_workout(available_time, activity_level):
-  multipliers = {"BMR": 0.1, "sedentary": 0.1, "light": 0.2, "moderate": 0.3, "active": 0.5, "very_active": 0.7}
-
-  #CALCULATES THE AVERAGE WEEKLY/DAILY WORKOUT TIME
-
-  if activity_level in multipliers:
-    return round(available_time * multipliers[activity_level], 2)
-  else:
-    raise ValueError("Invalid activity level provided.")
+    return max(6, sleep_estimation)  
