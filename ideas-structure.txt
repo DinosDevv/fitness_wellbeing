@@ -28,18 +28,19 @@
     Successful Streak
     Positive mood pie (How many days user was happy/enthusiastic/very happy vs how many he was bored/angry/sad)  
 4. Buy Premium
-5. Save everything to database instead of json files
-6. Signup/Login and session system
-  NOTES:
-    Signup/Login does work, it saves users to json file instead of .db file
 
-7. Pair Users to User data and store in .db
-
-8.Maybe workout tracker (weights/progressive overload) 
+8. Maybe workout tracker (weights/progressive overload) 
   ???
+
+9. Add Starting Rank when someone signs up
+10. Add Nav Bar
+
 
 =============== DONE ===============
 
 Add mood tracking to daily tracker 
+Save everything to database instead of json files
+Signup/Login and session system
+Pair Users to User data and store in .db
 
 

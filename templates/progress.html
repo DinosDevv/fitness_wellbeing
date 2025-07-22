@@ -12,8 +12,8 @@
 </head>
 <body>
   <div class="header">
-    <h1>Welcome To Your Progress Page, {{ user.username }}!</h1>
-    <p>[ {{ user.rank }} ]</p>
+    <h1>Welcome To Your Progress Page, {{ logged_user.username }}!</h1>
+    <p>[ {{ logged_user.user_data.rank }} ]</p>
     <h2>Here you can track your progress and see how well you are doing!</h2>
   </div>
   <div class="container">

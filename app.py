@@ -1,16 +1,39 @@
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, redirect, session, url_for, flash
 from calculate import calculate_calories, calculate_sleep, calculate_workout
-from file_handler import overwrite_json_file, read_json_file, append_to_json_file
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tracked_days.db' #CONFIGURES THE SUBMISSION DATABASE
+app.secret_key = os.urandom(24) #SESSION ENCRYPTION
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' #CONFIGURES THE SUBMISSION DATABASE
 db = SQLAlchemy(app)
 
 #CREATES THE SUBMISSION DATABASE CLASS
 
-class submission_entry(db.Model):
+class User(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(80), unique=True)
+  email = db.Column(db.String(120), unique=True)
+  password = db.Column(db.String(200), nullable=False)
+
+  user_data = db.relationship('UserData', backref='user', uselist=False)
+  submissions = db.relationship('Submissions', backref='user', lazy=True)
+
+class UserData(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   age = db.Column(db.Integer)
+   height = db.Column(db.Float)
+   weight = db.Column(db.Float)
+   gender = db.Column(db.String(20))
+   calories = db.Column(db.Float)
+   sleep = db.Column(db.Float)
+   workout = db.Column(db.Float)
+   rank = db.Column(db.String(15))
+
+   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Submissions(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   date = db.Column(db.String(20), default=lambda: datetime.datetime.now().strftime('%Y-%m-%d'))
   calories = db.Column(db.Float)
@@ -19,6 +42,8 @@ class submission_entry(db.Model):
   weight = db.Column(db.Float)
   mood = db.Column(db.String(50))
   successful_day = db.Column(db.Boolean, default=False)
+
+  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 with app.app_context():
   db.create_all()
@@ -34,13 +59,18 @@ def index():
 
 @app.route('/calculate_data')
 def calculate_data():
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
   return render_template('calculate.html')
 
 #DAILY TRACKER PAGE
 
 @app.route('/track_day')
 def track_day():
-   return render_template('track_day.html') 
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
+
+  return render_template('track_day.html') 
 
 #PREMIUM PACKS
 
@@ -52,19 +82,26 @@ def premium():
 
 @app.route('/show-submissions')
 def show_submissions():
-  entries = submission_entry.query.order_by(submission_entry.date.desc()).all()
+  entries = Submissions.query.order_by(Submissions.date.desc()).all()
   return render_template('submissions.html', tracked_days=entries)
 
 #LOGIN/SIGNUP PAGE
 
-@app.route('/log')
-def log():
-  return render_template('log.html')
+@app.route('/login_page')
+def login_page():
+  return render_template('login.html')
+
+@app.route('/signup_page')
+def signup_page():
+  return render_template('signup.html')
 
 #CALCULATES AND SAVES PERSONAL GOALS/DATA FOR USER INTO JSON FILE (-> SOON TO CHANGE TO .db FILE)
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
+
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
 
   #GET THE USER'S DATA FROM THE FORM
 
@@ -76,25 +113,30 @@ def calculate():
   available_time = request.form.get('available-free-time', type=float)
   sleep_estimation = request.form.get('sleep-estimation', type=float)
 
-  #OVERWRITES THE JSON FILE SO THAT THE USER CAN ONLY HAVE 1 PACK OF DATA
+  data_calculation = UserData(
+    age = age,
+    height = height,
+    weight = weight,
+    gender = gender,
+    calories = calculate_calories(age, height, weight, activity_level),
+    sleep = calculate_sleep(sleep_estimation, age),
+    workout = calculate_workout(available_time, activity_level),
+    rank = 'Rookie',
+    user_id = session['user_id']
+  )
 
-  overwrite_json_file('data/user_data.json', {
-    'age': age,
-    'height': height,
-    'weight': weight,
-    'gender': gender,
-    'calories': calculate_calories(age, height, weight, activity_level),
-    'sleep': calculate_sleep(sleep_estimation, age),
-    'workout': calculate_workout(available_time, activity_level),
-    'rank': 'Rookie'
-  })
+  db.session.add(data_calculation)
+  db.session.commit()
 
-  return redirect('/progress')
+  return redirect(url_for('progress'))
 
 #TRACKS DAILY SUBMISSION
 
 @app.route('/track', methods=['POST'])
 def track():
+
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
 
   #GETS DATA PER DAY/SUBMISSION
 
@@ -104,37 +146,30 @@ def track():
   weight = request.form.get('weight', type=float)
   mood = request.form.get('mood')
 
-  data = {
-    'date': datetime.datetime.now().strftime('%Y-%m-%d'),
-    'calories': calories,
-    'workout': workout,
-    'sleep': sleep,
-    'weight': weight,
-    'mood': mood,
-    'successful_day': False
-  }
-  print(request.form)
-
   #CREATES THE DATABASE ENTRY 
 
-  entry = submission_entry(
+  entry = Submissions(
     date=datetime.datetime.now().strftime('%Y-%m-%d'),
     calories=calories,
     workout=workout,
     sleep=sleep,
     weight=weight,
     mood=mood,
-    successful_day=False  #TO BE UPDATED!!
+    successful_day=False,  #TO BE UPDATED!!
+    user_id = session['user_id']
   )
 
   # SEE IF USER HIT ALL GOALS -> SUCCESSFUL DAY
-  user_data = read_json_file('data/user_data.json')
+
+  user_data = User.query.get(session['user_id']).user_data
+
   if (
-      calories >= user_data['calories'] - 150 and calories <= user_data['calories'] + 200 and
-      workout >= user_data['workout'] and
-      sleep >= user_data['sleep'] and sleep <= user_data['sleep'] + 1
+      calories >= user_data.calories - 150 and calories <= user_data.calories + 200 and
+      workout >= user_data.workout and
+      sleep >= user_data.sleep and sleep <= user_data.sleep + 1
   ):
       entry.successful_day = True
+
 
   db.session.add(entry) #SAVES SUBMISSION TO instance/tracked_days.db
   db.session.commit()
@@ -144,8 +179,14 @@ def track():
 @app.route('/progress')
 def progress():
   
+  if 'user_id' not in session:
+    return redirect(url_for('login_page'))
+  
+  user = User.query.get(session['user_id'])
+
   #FETCHES ALL ENTRIES FROM DATABASE 
-  all_entries = submission_entry.query.order_by(submission_entry.id.desc()).all()
+  all_entries = Submissions.query.filter_by(user_id=user.id).order_by(Submissions.id.desc()).all()
+  user_data = user.user_data
 
   #CREATES A LIST THAT DISPLAYS ONLY (n) NUMBER OF SUBMISSIONS
   days_to_display = all_entries[:10]
@@ -153,31 +194,22 @@ def progress():
   #CALCULATES THE NUMBER OF SUCCESFULL ENTRIES
   successful_days = sum(1 for day in all_entries if day.successful_day)
 
-  submissions = len(all_entries)
-
-  user_data = read_json_file('data/user_data.json')  #FOR NOW READS FROM JSON (-> SOON WILL BE PAIRED TO USER IN .db)
-
-  #DEMO USERNAME/RANK
-
-  user = {
-      "username": "Konstantinos", #DISPLAYED IN THE PROGRESS PAGE ON TOP
-      "rank": user_data['rank']
-  }
+  amount_of_submissions = len(all_entries)
 
   return render_template(
       'progress.html',
       tracked_days=days_to_display,
       successful_days=successful_days,
-      submissions=submissions,
+      submissions=amount_of_submissions,
       data=user_data,
-      user=user
+      logged_user = user
   )
 
 #CLEARS ALL SUBMISSIONS FROM THE .db FILE
 
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
-  db.session.query(submission_entry).delete()
+  db.session.query(Submissions).delete()
   db.session.commit()
   return redirect('/show-submissions')
 
@@ -185,52 +217,49 @@ def clear_data():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-  users = read_json_file('data/users.json') #READS ALL USERS FROM JSON FILE (-> SOON TO BE CHANGED)
-  
+  users = User.query.all()
+
+  print(users)
   username = request.form.get('username', type=str)
   password = request.form.get('password', type=str)
   email = request.form.get('email', type=str)
-
-  user_to_pass = {
-    "username": username,
-    "email": email,
-    "password": password
-  }
 
   found_match = False #BOOL VARIABLE TO CHECK IF USER ALREADY EXISTS
 
   if len(users) > 0:
     for user in users:
-      if user['username'] == username or user['email'] == email:
+      if user.username == username or user.email == email:
         found_match = True
         break
 
   if found_match:
     return 'User exists!' #RETURN ERROR IF USER EXISTS
   else:
-    append_to_json_file('data/users.json', user_to_pass) #IF USER DOESNT ALREADY EXIST, SAVE USER TO JSON FILE (-> SOON TO BE CHANGED)
-    return redirect('/progress')
+    new_user = User(username=username, password=password, email=email)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect('/login_page')
   
 #LOGIN
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    users = read_json_file('data/users.json') #READ ALL USERS FROM JSON FILE (-> SOON TO BE CHANGED)
+  if request.method == 'POST':
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-    #GET DATA FROM FORM
+    #CHECK IF USER EXISTS
 
-    username = request.form.get('username', type=str)
-    password = request.form.get('password', type=str)
+    user = User.query.filter_by(username=username).first()
+    if user and user.password == password:
+      session['user_id'] = user.id
+      session['username'] = user.username
+      return redirect(url_for('progress'))
+    else:
+      flash('Invalid username or password')
+      return redirect(url_for('login_page'))
 
-    for user in users:
-        if user['username'] == username:
-            if user['password'] == password:
-                return 'Logged In!'
-            else:
-                return 'Wrong Password'
-
-    # If no username matched at all
-    return 'Wrong Credentials'
 
 #APP RUNS WITH 'py app.py'
 
